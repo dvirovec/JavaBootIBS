@@ -1,0 +1,41 @@
+
+<div class="ui modal" id="routes_form"  style="padding:15px;margin:auto;top:10em;width:400px;">
+        <h2>Relacija putovanja</h2>
+        <form class="ui form">
+        		<table>
+        {{#order.routes[selected_route]}}
+	                 <tr><td>Relacija od</td><td colspan="2">	                 
+	                   <select class="ui dropdown search" name="town_id0" value={{order.town_id}}>
+		            	{{#towns}}
+		            		<option value={{id}}>{{name}}</option>
+		            	{{/}}
+		                </select>
+	                 </td></tr>
+	                 
+	                 <tr><td>Relacija do</td><td colspan="2">
+	                 <select class="ui dropdown search" name="town_id1" value={{order.town_id}}>
+		            	{{#towns}}
+		            		<option value={{id}}>{{name}}</option>
+		            	{{/}}
+		                </select>
+	                 </td></tr>
+	                 
+	                 <tr><td>Vrsta prijevoznog sredstva</td><td colspan="2">
+	                 <select class="ui dropdown search" value={{mean_trans_id}}>
+	                 		{{#means_of_trans}}
+								<option value={{id}}>{{name}}</option> 
+							{{/}}
+	                 </select>
+	                 </td></tr>
+
+	                 <tr><td>Kilometara</td><td><input type="number"  value={{km}}  twoway class="ui right aligned segment"></td></tr>
+	                 <tr><td>Iznos</td><td><input type="number"    value={{amount}}  twoway class="ui right aligned segment"></td>	             
+	                 </tr>	                
+                 {{/}}
+             </table>
+        </form>
+    		<div>
+             	<button class="ui primary button" onClick='calcCost();'>Spremi</button>
+             	<button class="ui primary button" onClick='onCostEditCancel();'>Odustani</button>
+         	</div>
+        </div>

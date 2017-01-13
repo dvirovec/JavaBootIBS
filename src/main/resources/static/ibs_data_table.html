@@ -1,0 +1,281 @@
+<script>
+
+var IbsTable = Ractive.extend({    
+    isolated: false,     
+    oninit:function() {
+
+    this.observe("selected", function(newIndex, oldIndex) {
+    
+            if(isNaN(newIndex)) return;
+
+            if(oldIndex!=null && oldIndex>-1) {
+                let row0 = document.getElementById("data_table").rows.item(oldIndex);
+                if(row0!=null)
+                    row0.style.backgroundColor='#ffffff';                            
+            }
+
+            if(newIndex!=null && newIndex>-1) {
+                let row1 = document.getElementById("data_table").rows.item(newIndex);
+                if(row1!=null)
+                    row1.style.backgroundColor='#dbe7f9';
+            }
+                
+        });
+    },     
+    onrender:function() {                
+        this.load_data();
+    },
+    data: {        
+        delete_disabled:"disabled",                     
+        append_mode:false,     
+        selected:null,          
+        data_url:"",  
+        form_id:"",                       
+    },
+    partials: {
+        dynamic_partial:function() {
+
+        let headers = this.get("headers").split(',');
+        let columns = this.get("columns").split(',');
+        let container_style = "";
+        let table_style = "";
+
+        if(this.get("table_width")!="") {
+            container_style = "width:100%;overflow:scroll;";
+            table_style     = "display: block;width:"+this.get("table_width")+";";}
+        else  {
+            container_style = "width:100%;";
+            table_style="display: block;width:100%;";            
+            }
+
+        let table_template = "<table class='ui dividing header' width='100%'><tr><td width='90%'><h3>{{title}}</h3></td><td><button id='add_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='plus icon large'></i></button></td><td align='left'><button id='remove_button' class='ui primary {{delete_disabled}} button' style='align:center;width:55px;' on-click='@this.onClickDelete()'><i class='trash outline icon large'></i></button></td><td><button id='refresh_button' class='ui primary button' style='align:center;width:55px;'  on-click='@this.onClickRefresh()'><i class='refresh icon large'></i></button></td><td><button id='search_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='search icon large'></i></button></td></tr> \
+            </table><div style='"+container_style+"'><table class='ui selectable celled table' \
+            id='data_table' style='"+table_style+"'><thead><th style='width:1%;text-align:center;'>\
+            <input type='checkbox' class='select_all' id='select_all' on-change='@this.selectAll()'></th><input type='hidden' value={{selected}}>";
+        
+        let dstyles = [];    
+
+        headers.forEach((header)=>{
+                hattr = header.split(':')
+                let hstyle = "", dstyle = "";                
+
+                if(hattr[1]!="") {                    
+                    hstyle += "style='width:"+hattr[1]+"%;"
+                    dstyle += "style='width:"+hattr[1]+"%;"
+                }                                
+
+                if(hattr[2]!="") {                                                        
+                      hstyle += "text-align:"+hattr[2]+";";                                           
+                }
+
+                if(hattr[3]!="") {                                                        
+                      dstyle += "text-align:"+hattr[3]+";";                                           
+                }
+
+                dstyle += "'";
+                hstyle += "'";
+                
+                dstyles.push(dstyle);
+
+                table_template += "<th "+hstyle+">"+hattr[0]+"</th>"                
+    });
+
+        table_template +="</thead><tbody style='display: block;height:75vh;overflow-y:auto;'>{{#data_rows}}<tr on-dblclick='@this.onDblClickEdit(@index)' on-click='@this.selectDataRow(@index)'><td style='width:2%;text-align:center;'><input type='checkbox' class='select_row' id='select_row' on-change='@this.selectRow(@index)' on-click=''></td>";
+
+        columns.forEach((column, i)=>{                
+            table_template += "<td "+dstyles[i]+">{{"+column+"}}</td>" });
+
+        table_template +="</tr>{{/}}</tbody><tfooter></tfooter></table></div><div class='ui vertical pointing menu' style='visibility:hidden;width:180px;position:fixed;z-index:100;top:0px;left:00px;background-color:#fcfcfc' id='data_menu'><a class='item' on-click='@this.openEdit()'>Uređivanje</a><a class='item' on-click='@this.deleteSelected()'>Brisanje</a></div>"
+       
+        table_template+="<div id='confirm_delete' class='ui small modal'><div class='header'>Brisanje</div><div class='content'><div class='left'>{{confirm_text}}</div></div><div class='actions'><div class='ui cancel button'>Prekid</div><div class='ui approve button'>U redu</div></div></div>"
+
+
+        return table_template;
+         }
+     },        
+    load_data:function() {
+        
+        let object = this;
+
+         $.get(this.get("data_url"), function( data ) {              
+            if(data!=null)  object.set("data_rows", data);                     
+        });         
+    },
+    upd : function(i, data) {
+
+        let rows = this.get("data_rows");
+        rows[i] = data; 
+        this.set("data_rows", rows);
+        },
+
+    add: function() {
+          this.get("data_rows").push(this.get("default_row"));
+          this.update("data_rows");
+        },
+    onClickAdd: function() {         
+
+            this.set("append_mode", true);
+            
+            this.add();                                   
+            
+            this.set("selected",this.get("data_rows").length-1);  
+
+            this.update("selected");        
+            
+            $(this.get("form_id")).show();             
+    },
+    onClickSaveClose: function() {    
+
+        let object = this;    
+        let data = this.get('data_rows')[this.get("selected")];        
+        if(data.id===null) { 
+
+            $.ajax ({url: this.get("data_url"),
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data){                        
+                            object.upd(object.get("selected"), data)
+                            $(object.get("form_id")).hide();
+                        }
+                    });
+              }
+        else {
+            $.ajax ({url: this.get("data_url")+"/"+data.id,
+                        type: "PUT",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data){
+                                object.upd(object.get("selected"), data);
+                                $(object.get("form_id")).hide();                       
+                        }
+                    }); 
+     }
+    },      
+  onClickRefresh: function() {
+    this.load_data();
+    },
+ deleteSelected:function() {
+
+    let object = this;
+
+    $('#confirm_delete').modal('setting', {
+        closable  : false,
+    onDeny    : function(){      
+      
+    },
+    onApprove : function() {
+          
+        let i = object.get("selected");
+        let data = object.get("data_rows")[i];
+        
+        if(data.id!=null)
+            $.ajax ({url: object.get("data_url")+"/"+data.id,
+                        type: "DELETE",
+                        data:  JSON.stringify(object.get("data_rows")[i]),     
+                        contentType: "application/json; charset=utf-8",                                  
+                        success: function(data){
+                            let menu = document.getElementById("data_menu");
+                            object.splice("data_rows",i,1);
+                            menu.style.visibility = "hidden"; 
+                        }
+                    });
+              }}).modal('show');    
+ },
+ onClickDelete: function() {
+
+  let rows=[]; 
+
+  let object = this; 
+
+  $('#data_table tr').each((i, row)=>{               
+
+        let data = this.get("data_rows")[i];
+        
+        if($(row).find("input:checked").length==0) { 
+            rows.push(data);                                   
+        }                       
+        else {            
+            if(data.id!=null)
+                $.ajax ({url: this.get("data_url")+"/"+data.id,
+                        type: "DELETE",
+                        data:  JSON.stringify(this.get("data_rows")[i]),     
+                        contentType: "application/json; charset=utf-8",                                  
+                        success: function(data){                        
+                            object.set("data_rows",rows);
+                        }
+                    });            
+          }
+        });
+},
+    onClickCancel:function(){
+
+          if(this.get("append_mode")) {            
+            this.del(this.get("selected"));
+          };
+
+          this.set("append_mode", false);
+
+          $(this.get("form_id")).hide();
+    },
+    selectDataRow: function(i) {            
+            
+            if(event.target.className=='select_row') return;
+            
+            let menu = document.getElementById("data_menu");
+
+            if(menu!=undefined) {        
+                menu.style.top = (event.clientY-12)+"px";
+                menu.style.left = (event.clientX-12)+"px";            
+                menu.style.visibility = 'visible';                
+
+                menu.onmouseleave = ()=>{
+                    menu.style.visibility = "hidden";
+                }
+            }
+            this.set("selected", i);                           
+    },
+    selectRow: function(i) {
+                        
+        let selected_cnt = document.getElementById("data_table").querySelectorAll("tr input:checked").length; 
+
+        this.set("delete_disabled", (selected_cnt===0) ? "disabled": "");      
+        if(selected_cnt===0)
+            document.getElementById("select_all").checked = false;
+
+    },
+    selectAll: function() {
+      
+        let checkbox = document.getElementById("select_all");
+
+        let checked = checkbox.checked;
+
+        document.querySelectorAll('.select_row').forEach((c)=>{
+            c.checked = checked;
+        });
+
+        this.set("delete_disabled", document.getElementById("data_table").querySelectorAll("tr input:checked").length===0 ? "disabled": "");
+        },   
+    onDblClickEdit: function(i) {
+
+        let menu = document.getElementById("data_menu");        
+        menu.style.visibility = "hidden"; 
+          
+          this.set("selected",i);
+          this.update("selected");
+       
+          $(this.get("form_id")).show();            
+
+          this.append_mode = false;        
+    },   
+    openEdit: function() {     
+
+         $(this.get("form_id")).show();            
+        this.append_mode = false;                    
+    },  
+    
+});
+
+</script>

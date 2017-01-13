@@ -1,0 +1,40 @@
+
+<script>
+ 
+var IbsCombo = Ractive.extend({
+	template:"<div>{{>dynamic_component}}</div>",
+	isolated: false,		       
+ 	onconfig:function() {
+		          let data_url = this.get("data_url");
+				  let object = this;
+                  		
+		         $.get(data_url, function( data ) {  
+		         	object.set("data_rows", data);		         			         
+		        	});
+	},	
+	data: { 
+		 value_field:"",
+	     description_field:"",
+	     id_field:"",	
+		 data_url:"",
+		 data_rows:null,
+    },	
+ partials: {
+ 	dynamic_component:function() {
+						        	
+        	let description_field = (this.get("description_field") === "") ? "name": this.get("description_field");
+        	let id_field = (this.get("id_field") === "") ? "id":this.get("id_field");
+
+        	component = "<select class='ui dropdown search' value={{"+this.get("value_field")+"}}> \
+                 {{#data_rows}} \
+                    <option value={{"+id_field+"}}>{{"+description_field+"}}</option>\
+                    {{/}} \
+                </select>";
+
+          return component;
+        },
+ }
+});
+
+</script>
+ 
