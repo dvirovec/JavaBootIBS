@@ -12,7 +12,7 @@ var cdata = new Ractive({
 	},  
 			
    add: function() {
-       	  this.get(table_name).push({ id:null, name:"Flexbit", address:"", town:"", cid:""} );
+       	  this.get(table_name).push({ id:null, name:"", address:"", town:"", cid:""} );
           this.update(table_name);
        	},
 
