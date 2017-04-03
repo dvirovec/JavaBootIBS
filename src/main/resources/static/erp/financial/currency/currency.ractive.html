@@ -2,43 +2,25 @@
 
 var company_form = new IbsTable({
     el:"#currency",
-    template:"#currency_form",    
+    template:"#currency_form",
     onconfig:function() {
-            $.get("/erp/country", (data)=>{
-                      this.set("countries",data);
-                      this.get("default_row").country = this.get("countries")[0];
-                    });
-                },
+
+    },
     oninit: function() {
 
         this._super();
         
-        this.observe("country_id", function(newId, oldId) {          
-
-                let country = this.get("countries").find((c)=> { return c.id === newId;});                                            
-                let currency = this.get("data_rows")[this.get("selected")];
-                
-                if(currency!=undefined) {                    
-                    currency.country = country;
-                }
-    });
     },
     data: {  title:"Valute",
-             confirm_text:"Želite li obrisati valutu ?!",
-             country_id:null,
-             countries:[],
+             confirm_text:"Želite li obrisati valutu ?!",                          
              data_rows:[],
              default_row:{ id:null,  currencyNum:0, currencyCode:"", currencyName:"", country:null },
              table_width:"",
-             headers:"Oznaka:5:center:center,Šifra:5:center:center,Naziv valute:50:center:,Država:40:center:",
-             columns:"currencyCode, currencyNum, currencyName, country_name(country.id)",
+             headers:"Oznaka:5:center:center,Šifra:5:center:center,Naziv valute:50:center:",
+             columns:"currencyCode, currencyNum, currencyName",
+             validations: { currencyCode: "isEmpty,isMinLen:3", currencyNum:"isEmpty,isLen:3,isNum",currencyName:"isEmpty,isMinLen:3" },      
              data_url:"/erp/currency",
              form_id:"#data_form",
-        
-             country_name: function(id) {
-              if(id!=null)
-                return this.get("countries").find((t)=> { return t.id === id;}).name;
-             },             
                 },
     components: { IbsCombo:IbsCombo },
 
@@ -55,20 +37,16 @@ var company_form = new IbsTable({
                     {{#data_rows[selected]}}
                          <div class="two fields">
                             <div class="four wide field">
-                            <label for="num">Šifra</label><input name="num" type="text" value={{currencyNum}} twoway>
-                            </div>                            
+                            <label for="currencyCode">Šifra</label><input id="currencyCode" name="currencyCode" type="text" value={{currencyNum}} twoway>
+                            </div>
                             <div class="ui four wide field">
-                            <label for="code">Oznaka</label><input name="address" type="text" value={{currencyCode}} twoway>
+                            <label for="currencyCode">Oznaka</label><input id="currencyCode"name="currencyCode" type="text" value={{currencyCode}} twoway>
                             </div>
                         </div>
                         <div class="two fields">
                             <div class="ui ten wide field">
-                            <label for="name">Naziv valute</label><input name="name" type="text" value={{currencyName}} twoway>
-                            </div>
-                            <div class="ten wide field">
-                               <label for="">Država</label>
-                               <IbsCombo data_url="/erp/country" value_field="country_id"></IbsCombo>
-                            </div>
+                            <label for="currencyName">Naziv valute</label><input id="currencyName" name="currencyName" type="text" value={{currencyName}} twoway>
+                            </div>                            
                         </div>
                     {{/}}
             <div>

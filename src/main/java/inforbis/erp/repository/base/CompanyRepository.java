@@ -12,7 +12,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CompanyRepository extends CrudRepository<Company, Long> {
 
-    @Query("select a from Company a where a.name like :companyName"+"%")
+    /*@Query("select a from Company a where a.name like :companyName"+"% and client_id = :client_id" )
+    Iterable<Company> findCompanyByName(@Param("companyName") String companyName, @Param("client_id") Long client_id);
+*/
+
+    @Query("select a from Company a where a.name like :companyName"+"%" )
     Iterable<Company> findCompanyByName(@Param("companyName") String companyName);
+
+    @Query("select a from Company a where client_id = :client_id")
+    Iterable<Company> findAll(@Param("client_id") Long client_id);
 
 }

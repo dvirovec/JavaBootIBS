@@ -3,11 +3,9 @@
 <html lang='hr-HR'>
 <head>
 
-    <script src="../polymer/platform.js"></script>
     <script src="../script/jquery-3.1.1.min.js"></script>
     <script src="../semantic/semantic.min.js"></script>
     <script src="../ractive/ractive.min.js"></script>
-
 
     <script src="helpers.js"></script>    
     
@@ -30,6 +28,11 @@
 	td {
 	    padding: 5px;
 	}
+
+	.number {
+	    text-align:right;
+	}
+
 
 </style>
 
@@ -66,8 +69,12 @@
     <i class="dropdown icon"></i>
     Računovodstvo
   </div>
-  
-  <div class="content"></div>
+  <div class="content" style="padding-left:50px;">
+	<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	    <a class="item" onclick="openAccountForm()">Konta</a>
+		<a class="item" onclick="openCompanyForm()">Valute</a>
+	</div>
+  </div>
 
   <div class="title">
     <i class="dropdown icon"></i>
@@ -80,8 +87,10 @@
     <i class="dropdown icon"></i>
     Kadrovi
   </div>
-
-<div class="content">eqweqwe
+<div class="content" style="padding-left:50px;">
+<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	   <a class="item" onclick="openEmployeeForm()">Zaposlenici</a>	   
+	</div>
 </div>
 
 
@@ -91,8 +100,10 @@
   </div>
 <div class="content" style="padding-left:50px;">
 <div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
-	  <a class="item" onclick="openCurrencyForm()">Poduzeća</a>
-	  <a class="item" onclick="openCompanyForm()">Valute</a>  
+	   <a class="item" onclick="openCurrencyForm()">Poduzeća</a>	  
+	   <a class="item" onclick="openOrderForm()">Nalozi</a>
+	   <a class="item" onclick="openEmployeeForm()">Zaposlenici</a>
+	   <a class="item" onclick="openCountryForm()">Države</a>	    
 	</div>
 </div>
 </div>
@@ -117,6 +128,22 @@
 		openPage("./erp/financial/currency/currency.ractive.html");	    	
     }
 
+    var openOrderForm = ()=>{
+		openPage("./erp/travel/travel_order.ractive.html");
+    }
+
+
+	var openEmployeeForm = ()=>{
+		openPage("./erp/base/employee/employee.ractive.html");
+    }
+
+    var openCountryForm = ()=>{
+		openPage("./erp/base/country/country.ractive.html");
+    }
+
+var openAccountForm = ()=>{
+		openPage("./erp/financial/account/account.ractive.html");
+    }
 
     var openPage = (page_url)=> {
 
@@ -142,7 +169,7 @@
 		});
 		}
 		else 					
-		$("#erp-document").load("./erp/system/login/login.html");			
+		$("#erp-document").load("/login.html");
     }
 
     var home_page = new Ractive({
@@ -172,6 +199,8 @@
 				});
 			
 
+
+
 			let last_page = getCookie("orbis.erp.last_page");
 
 			console.log(last_page);
@@ -181,7 +210,9 @@
 			}
 
 
+
 		</script>
+
 
 
 </body>

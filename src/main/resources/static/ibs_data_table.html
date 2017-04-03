@@ -1,18 +1,36 @@
 <script>
 
-var IbsTable = Ractive.extend({    
+IbsTable = Ractive.extend({    
     isolated: false,     
+    
     oninit:function() {
+
+    this.observe("search_sample", function(newSample, oldSample) {              
+
+        if(newSample.length>0) {
+
+              if(!this.get("isLetter")(newSample)) {
+                this.load_data(this.get("name_search_url")+newSample);
+              }
+
+              if(!this.get("isNum")(newSample)) {
+                this.load_data(this.get("code_search_url")+newSample);                
+              }
+          }
+          else {
+            this.load_data(this.get("data_url"));
+          }
+    });    
 
     this.observe("selected", function(newIndex, oldIndex) {
     
-            if(isNaN(newIndex)) return;
+            if(Number.isNaN(newIndex)) return;
 
             if(oldIndex!=null && oldIndex>-1) {
                 let row0 = document.getElementById("data_table").rows.item(oldIndex);
                 if(row0!=null)
                     row0.style.backgroundColor='#ffffff';                            
-            }
+            }            
 
             if(newIndex!=null && newIndex>-1) {
                 let row1 = document.getElementById("data_table").rows.item(newIndex);
@@ -23,16 +41,106 @@ var IbsTable = Ractive.extend({
         });
     },     
     onrender:function() {                
-        this.load_data();
-    },
+        this.load_data(this.get("data_url"));
+    },    
     data: {        
         delete_disabled:"disabled",                     
-        append_mode:false,     
+        append_mode:false,
+        edit_mode:false,     
         selected:null,          
-        data_url:"",  
-        form_id:"",                       
-    },
-    partials: {
+        data_url:"",
+        name_search_url:null,
+        code_search_url:null,  
+        form_id:"",
+        undo_cache:null,
+        search_sample:"", 
+        isEmpty: function(value) {                                        
+            
+            let message = "Podatak ne smije biti prazan!";    
+
+            if(value===null) {                 
+                return message;            
+            }
+
+            if(String(value).trim()==="") {            
+                return message;            
+            }                
+
+            return null;
+            },      
+        isNum: function(value) {
+                let message = "Podatak mora biti brojčani!";    
+
+                if(Number.isNaN(Number(value))) {
+                    return message;
+                }
+                
+            return null;
+            },
+        isUpperLetter: function(value) {
+
+            let message = "Podatak mora biti unesen samo velikim slovima!";                
+            let rgx = /^[A-Z]+$/;
+            
+            if(!value.match(rgx)) {
+                return message;
+            }
+
+            return null;
+        },
+        isLowerLetter: function(value) {
+
+            let message = "Podatak mora biti unesen samo malim slovima!";                
+            var rgx = /^[a-zčćđšž-]+$/;
+            
+            if(!value.match(rgx)) {
+                return message;
+            }
+            return null;
+        },
+        isAlpha: function(value) {
+
+            let message = "Podatak mora sadržavati samo slova i brojke!";                
+            var rgx = /^[0-9][a-zčćđšž-][A-ZČĆĐŠŽ]+$/;
+            
+            if(!value.match(rgx)) {
+                return message;
+            }
+            return null;
+        },
+        isLetter: function(value) {
+
+            let message = "Podatak mora sadržavati samo slova !";                
+            let rgx = /^[A-ZČĆĐŠŽ][a-zčćđšž-]+$/;
+            
+            if(!value.match(rgx)) {
+                return message;
+            }
+
+            return null;
+        },
+        isLen: function(value, len) {
+            
+            let message = "Podatak mora biti dugačak "+String(len)+" znakova!";
+
+            if(String(value).length != len)  { 
+                return message;
+            }
+                    
+            return null;
+        },
+        isMinLen: function(value, len) {
+            
+            let message = "Podataka mora biti dugačak minimalno "+String(len)+" znakova!";
+
+            if(String(value).length < len)  { 
+                return message;
+            }
+                    
+            return null;
+        },
+    },//-----------------------------Data
+        partials: {
         dynamic_partial:function() {
 
         let headers = this.get("headers").split(',');
@@ -48,7 +156,10 @@ var IbsTable = Ractive.extend({
             table_style="display: block;width:100%;";            
             }
 
-        let table_template = "<table class='ui dividing header' width='100%'><tr><td width='90%'><h3>{{title}}</h3></td><td><button id='add_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='plus icon large'></i></button></td><td align='left'><button id='remove_button' class='ui primary {{delete_disabled}} button' style='align:center;width:55px;' on-click='@this.onClickDelete()'><i class='trash outline icon large'></i></button></td><td><button id='refresh_button' class='ui primary button' style='align:center;width:55px;'  on-click='@this.onClickRefresh()'><i class='refresh icon large'></i></button></td><td><button id='search_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='search icon large'></i></button></td></tr> \
+        let table_template = "<table class='ui dividing header' width='100%'><tr><td width='90%'><h3>{{title}}</h3></td> \
+        <td><div class='ui mini icon input'><input type='text' placeholder='Traženje...' value={{search_sample}} twoway> \
+        <i class='search icon'></i></div><td> \
+        <button id='add_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='plus icon large'></i></button></td><td align='left'><button id='remove_button' class='ui primary {{delete_disabled}} button' style='align:center;width:55px;' on-click='@this.onClickDelete()'><i class='trash outline icon large'></i></button></td><td><button id='refresh_button' class='ui primary button' style='align:center;width:55px;'  on-click='@this.onClickRefresh()'><i class='refresh icon large'></i></button></td><td><button id='search_button' class='ui primary button'  on-click='@this.onClickAdd()' style='align:center;width:55px;'><i class='search icon large'></i></button></td></tr> \
             </table><div style='"+container_style+"'><table class='ui selectable celled table' \
             id='data_table' style='"+table_style+"'><thead><th style='width:1%;text-align:center;'>\
             <input type='checkbox' class='select_all' id='select_all' on-change='@this.selectAll()'></th><input type='hidden' value={{selected}}>";
@@ -93,69 +204,43 @@ var IbsTable = Ractive.extend({
         return table_template;
          }
      },        
-    load_data:function() {
+    load_data:function(url) {
         
         let object = this;
 
-         $.get(this.get("data_url"), function( data ) {              
+         $.get(url, function( data ) {              
             if(data!=null)  object.set("data_rows", data);                     
         });         
-    },
+    },    
     upd : function(i, data) {
-
-        let rows = this.get("data_rows");
-        rows[i] = data; 
-        this.set("data_rows", rows);
+            let rows = this.get("data_rows");                
+            rows[i] = data;                 
+            this.set("data_rows", rows);
+            this.update("data_rows");
         },
-
-    add: function() {
-          this.get("data_rows").push(this.get("default_row"));
+    add: function() {          
+          this.get("data_rows").push( JSON.parse( JSON.stringify( this.get("default_row"))));
           this.update("data_rows");
         },
+    del: function(i) {                
+        if((this.get("data_rows")[i]).id==null) {
+            this.splice("data_rows",i,1);        
+            this.update("data_rows");    
+        }
+    },
     onClickAdd: function() {         
-
-            this.set("append_mode", true);
-            
-            this.add();                                   
+                
+            this.add();                                               
             
             this.set("selected",this.get("data_rows").length-1);  
+            this.update("selected");                    
+            this.set("append_mode", true);            
 
-            this.update("selected");        
-            
-            $(this.get("form_id")).show();             
+            this.openEdit();            
+
     },
-    onClickSaveClose: function() {    
-
-        let object = this;    
-        let data = this.get('data_rows')[this.get("selected")];        
-        if(data.id===null) { 
-
-            $.ajax ({url: this.get("data_url"),
-                        type: "POST",
-                        data: JSON.stringify(data),
-                        dataType: "json",
-                        contentType: "application/json; charset=utf-8",
-                        success: function(data){                        
-                            object.upd(object.get("selected"), data)
-                            $(object.get("form_id")).hide();
-                        }
-                    });
-              }
-        else {
-            $.ajax ({url: this.get("data_url")+"/"+data.id,
-                        type: "PUT",
-                        data: JSON.stringify(data),
-                        dataType: "json",
-                        contentType: "application/json; charset=utf-8",
-                        success: function(data){
-                                object.upd(object.get("selected"), data);
-                                $(object.get("form_id")).hide();                       
-                        }
-                    }); 
-     }
-    },      
   onClickRefresh: function() {
-    this.load_data();
+            this.load_data(this.get("data_url"));
     },
  deleteSelected:function() {
 
@@ -185,56 +270,51 @@ var IbsTable = Ractive.extend({
               }}).modal('show');    
  },
  onClickDelete: function() {
+      let rows=[]; 
 
-  let rows=[]; 
+      let object = this; 
 
-  let object = this; 
+      $('#data_table tr').each((i, row)=>{               
 
-  $('#data_table tr').each((i, row)=>{               
-
-        let data = this.get("data_rows")[i];
-        
-        if($(row).find("input:checked").length==0) { 
-            rows.push(data);                                   
-        }                       
-        else {            
-            if(data.id!=null)
-                $.ajax ({url: this.get("data_url")+"/"+data.id,
-                        type: "DELETE",
-                        data:  JSON.stringify(this.get("data_rows")[i]),     
-                        contentType: "application/json; charset=utf-8",                                  
-                        success: function(data){                        
-                            object.set("data_rows",rows);
-                        }
-                    });            
-          }
-        });
-},
-    onClickCancel:function(){
-
-          if(this.get("append_mode")) {            
-            this.del(this.get("selected"));
-          };
-
-          this.set("append_mode", false);
-
-          $(this.get("form_id")).hide();
-    },
+            let data = this.get("data_rows")[i];
+            
+            if($(row).find("input:checked").length==0) { 
+                rows.push(data);                                   
+            }                       
+            else {            
+                if(data.id!=null)
+                    $.ajax ({url: this.get("data_url")+"/"+data.id,
+                            type: "DELETE",
+                            data:  JSON.stringify(this.get("data_rows")[i]),     
+                            contentType: "application/json; charset=utf-8",                                  
+                            success: function(data){                        
+                                object.set("data_rows",rows);
+                            }
+                        });            
+              }
+            });
+        },
     selectDataRow: function(i) {            
             
             if(event.target.className=='select_row') return;
             
-            let menu = document.getElementById("data_menu");
+            if(!this.get("edit_mode"))  {
 
-            if(menu!=undefined) {        
-                menu.style.top = (event.clientY-12)+"px";
-                menu.style.left = (event.clientX-12)+"px";            
-                menu.style.visibility = 'visible';                
+                let menu = document.getElementById("data_menu");
 
-                menu.onmouseleave = ()=>{
-                    menu.style.visibility = "hidden";
+                if(menu!=undefined) {       
+
+                    menu.style.top = (event.clientY-12)+"px";
+                    menu.style.left = (event.clientX-12)+"px";            
+                    menu.style.visibility = 'visible';                
+                 
+                    menu.onmouseleave = ()=>{
+                        menu.style.visibility = "hidden";
+                    }
                 }
             }
+            this.set("undo_cache",  JSON.parse(JSON.stringify(this.get("data_rows")[i])));                        
+                            
             this.set("selected", i);                           
     },
     selectRow: function(i) {
@@ -257,25 +337,166 @@ var IbsTable = Ractive.extend({
         });
 
         this.set("delete_disabled", document.getElementById("data_table").querySelectorAll("tr input:checked").length===0 ? "disabled": "");
-        },   
-    onDblClickEdit: function(i) {
+    },   
+    resetFormValidationStatus: function() {
 
-        let menu = document.getElementById("data_menu");        
-        menu.style.visibility = "hidden"; 
+        for(var field in this.get('validations')) {
+                let object = $(this.get('form_id')+' input[name='+field+']');
+                object.css('border-color','');                    
+                object.attr('title','');
+        }
+    },
+    validateForm: function() {
+        
+        this.resetFormValidationStatus();
+
+        let valid = true;
+        
+        var validationMessage;
+
+        var firstErrorObject = null;
+
+        for(var field in this.get("validations")) {            
           
+            let validations = this.get("validations")[field].split(',');
+
+            validationMessage = "";            
+
+            for(var v in validations) {
+
+                    let value = (this.get("data_rows")[this.get("selected")])[field];               
+                    
+                    let message = null;
+                    
+                    let vFunction = null;
+
+                    if(validations[v].includes(':')) {
+
+                        let params = validations[v].split(":")
+                        vFunction = this.get(params[0].trim());                        
+                        let param = params[1];                        
+                        
+                        message = vFunction(value, param);         
+                    }    
+                    else {
+                        vFunction = this.get(validations[v].trim());
+                        message = vFunction(value);         
+                    }
+                    
+                    if(message!=null) {
+                        validationMessage = validationMessage + message +'\n';                                                                               
+                    }
+
+            }
+                     if(validationMessage.length > 0) {
+
+                                valid = false;
+                                let object = $(this.get("form_id")+" input[name="+field+"]");
+                                object.css("border-color","red");                    
+                                object.attr('title', validationMessage);
+
+                                if(firstErrorObject==null)
+                                    firstErrorObject = object;
+                            }   
+        }
+
+        if(!valid && firstErrorObject!=null) {
+            firstErrorObject.focus();
+            firstErrorObject.select();
+        }
+
+        return valid;
+    },
+   
+    // Popup form events
+    onClickSaveClose: function() {    
+        
+        if (!this.validateForm()) return;
+
+        let object = this;    
+        let data = this.get('data_rows')[this.get("selected")];        
+
+        if(data.id===null) { 
+
+            $.ajax ({url: this.get("data_url"),
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data){                        
+                            object.upd(object.get("selected"), data)
+                            $(object.get("form_id")).hide();
+                        }
+                    });
+              }
+        else {
+            $.ajax ({url: this.get("data_url")+"/"+data.id,
+                        type: "PUT",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data){
+                                object.upd(object.get("selected"), data);
+                                $(object.get("form_id")).hide();                       
+                        }
+                    }); 
+     }     
+     this.set("edit_mode", false);
+    },              
+     onClickCancel:function(){
+          
+    $(document).unbind('keyup');
+
+          this.set("edit_mode", false);            
+
+          this.resetFormValidationStatus();
+
+          $(this.get("form_id")).hide();
+          
+          let append_mode = this.get("append_mode");
+
+          if(append_mode) {            
+                this.del(this.get("selected"));
+                this.set("append_mode", false); 
+                this.update("append_mode");
+          }
+          else {            
+                this.upd(this.get("selected"), this.get("undo_cache"));                                  
+                this.set("undo_cache",null);
+          }
+    },    
+    // Data row events
+    onDblClickEdit: function(i) {
+            
           this.set("selected",i);
           this.update("selected");
        
-          $(this.get("form_id")).show();            
+          this.openEdit();
 
-          this.append_mode = false;        
     },   
+    // Row menu events
     openEdit: function() {     
 
-         $(this.get("form_id")).show();            
-        this.append_mode = false;                    
-    },  
-    
+    let object = this;    
+      
+    this.set("edit_mode", true);
+
+    let menu = document.getElementById("data_menu");        
+    menu.style.visibility = "hidden"; 
+
+    $(document).keyup(function(e) {            
+            
+            if (e.keyCode === 27) // Esc
+                object.onClickCancel();
+            else if (e.keyCode === 45) // Insert 
+                object.onClickAdd();
+            else if (e.keyCode === 113) // F2 
+                object.onClickSaveClose();
+          });    
+                
+    $(this.get("form_id")).show();         
+
+    },
 });
 
 </script>

@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import java.util.Collection;
 
 @RestController
@@ -18,8 +22,8 @@ public class CompanyController {
 	
 	@RequestMapping(value= "/erp/company", method=RequestMethod.GET,
 			                                produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Company>> getCompanys() {
-	
+	public ResponseEntity<Iterable<Company>> getCompanys(HttpSession session) {
+
 			Iterable<Company> companys = companyService.findAll();
 			
 			return new ResponseEntity<Iterable<Company>>(companys, HttpStatus.OK);
@@ -27,7 +31,7 @@ public class CompanyController {
 
 	@RequestMapping(value= "/erp/company_name/{company_name}", method=RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Company>> getCompanysByName(@PathVariable("company_name") String company_name) {
+	public ResponseEntity<Iterable<Company>> getCompanysByName(@PathVariable("company_name") String company_name, HttpSession session) {
 
 		Iterable<Company> companys = companyService.findCompanyByName(company_name);
 
@@ -51,7 +55,7 @@ public class CompanyController {
 
 	@RequestMapping(value= "/erp/company", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE,
 	produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Company> createCompany(@RequestBody Company company) {
+	public ResponseEntity<Company> createCompany(@RequestBody Company company, HttpSession session) {
 
 		Company savedCompany =  companyService.create(company);
 
@@ -61,7 +65,7 @@ public class CompanyController {
 
 	@RequestMapping(value= "/erp/company/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<Company> updateCompany(@RequestBody Company company) {
+		public ResponseEntity<Company> updateCompany(@RequestBody Company company, HttpSession session) {
 
 		Company updatedCompany = companyService.update(company);
 
@@ -73,7 +77,7 @@ public class CompanyController {
 	}
 
 	@RequestMapping(value= "/erp/company/{id}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Company> deleteCompany(@PathVariable("id") Long id, @RequestBody Company company){
+	public ResponseEntity<Company> deleteCompany(@PathVariable("id") Long id, @RequestBody Company company, HttpSession session){
 
 		companyService.delete(id);
 

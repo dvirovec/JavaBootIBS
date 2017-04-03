@@ -17,11 +17,12 @@
 	  		<label>Spremiti prijavu</label>  		  		
 		</div>    
 
-		<div class="ui twelwe wide field" align="right">
+		<div class="ui sixteen wide field" align="right">
 			<div class="ui right pointing red basic label" style="visibility: hidden" id="error">
 				Prijava nije uspijela !
 		     </div>
-			<button class="ui primary button" id="login_button">Prijava</button>		    
+			<button class="ui primary button" id="login_button">Prijava</button>
+			<button class="ui primary button" id="reg_button">Registracija</button>
 		    <button class="ui primary button">Prekid</button>		     		    
 		</div>
 	</div>
@@ -31,6 +32,24 @@
 <script>
 
 $(document).ready(()=>{
+
+$("#reg_button").click(()=>{
+
+
+data = {"name": document.getElementById("username").value, "password":document.getElementById("password").value };
+
+console.log(data);
+
+	  $.ajax ({url: "/erp/register/",
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data){                                                   
+                        }
+                    });
+             }
+	);
 
 $( "#login_button" ).click(()=> {
 								

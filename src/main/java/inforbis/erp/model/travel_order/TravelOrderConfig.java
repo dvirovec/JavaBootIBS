@@ -8,7 +8,7 @@ import javax.persistence.Table;
  * Created by dvirovec on 22.12.2016..
  */
 @Entity
-@Table(name="config", schema="travel_order")
+@Table(name="config", schema="travel")
 public class TravelOrderConfig {
 
     @Id

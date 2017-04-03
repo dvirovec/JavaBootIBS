@@ -1,5 +1,6 @@
 package inforbis.erp.model.financial.currency;
 
+import inforbis.erp.model.base.BaseEntity;
 import inforbis.erp.model.base.Country;
 
 import javax.persistence.*;
@@ -9,27 +10,11 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="currency", schema="financial")
-public class Currency {
+public class Currency extends BaseEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
     private Integer currencyNum;
     private String currencyCode;
     private String currencyName;
-
-    @OneToOne
-    @JoinColumn(name="country_id")
-    private Country country;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Integer getCurrencyNum() {
         return currencyNum;
@@ -55,11 +40,4 @@ public class Currency {
         this.currencyName = currencyName;
     }
 
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
 }

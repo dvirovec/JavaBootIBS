@@ -17,6 +17,7 @@ public class AppWebMvcConfig {
                 registry.addViewController("/index").setViewName("forward:/index.html");
                 registry.addViewController("/order").setViewName("forward:/travel_order.html");
                 registry.addViewController("/home").setViewName("forward:/home.html");
+                registry.addViewController("/login").setViewName("forward:/login.html");
 
             }
         };

@@ -13,7 +13,7 @@ public interface CompanyService {
 
     Iterable<Company> findCompanyByName(String companyName);
     Company findOne(Long id);
-    Company create(Company gretting);
+    Company create(Company company);
     Company update(Company Company);
     void delete(Long id);
 

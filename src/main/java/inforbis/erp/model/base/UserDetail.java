@@ -9,11 +9,8 @@ import java.sql.Date;
  */
 @Entity
 @Table(name="user_detail", schema="base")
-public class UserDetail {
+public class UserDetail extends BaseEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
 
     private String firstName;
 
@@ -32,14 +29,6 @@ public class UserDetail {
     @OneToOne
     @JoinColumn(name="country_id")
     private Country country;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;

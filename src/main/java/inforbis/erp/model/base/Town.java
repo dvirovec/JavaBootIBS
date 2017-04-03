@@ -1,5 +1,7 @@
 package inforbis.erp.model.base;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,23 +12,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="town", schema="base")
-public class Town {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Town extends BaseEntity {
 
     private String name;
 
     private String countryCode;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

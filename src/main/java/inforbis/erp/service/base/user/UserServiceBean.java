@@ -67,6 +67,8 @@ public class UserServiceBean implements UserService {
         return updatedCompany;
     }
 
+
+
     @Override
     public void delete(Long id) {
 

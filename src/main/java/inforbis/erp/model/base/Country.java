@@ -1,33 +1,23 @@
 package inforbis.erp.model.base;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import inforbis.erp.model.financial.currency.Currency;
+
+import javax.persistence.*;
 
 /**
  * Created by dvirovec on 29.9.2016..
  */
 @Entity
 @Table(name="country", schema="base")
-public class Country {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Country extends BaseEntity {
 
     private String code;
     private String name;
     private Double day_amount;
-    private String currency;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne
+    @JoinColumn(name="currency_id")
+    private Currency currency;
 
     public String getName() {
         return name;
@@ -45,7 +35,11 @@ public class Country {
 
     public void setDay_amount(Double day_amount) { this.day_amount = day_amount; }
 
-    public String getCurrency() { return currency; }
+    public Currency getCurrency() {
+        return currency;
+    }
 
-    public void setCurrency(String currency) { this.currency = currency; }
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
 }

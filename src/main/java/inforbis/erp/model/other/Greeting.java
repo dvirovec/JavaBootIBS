@@ -1,23 +1,13 @@
 package inforbis.erp.model.other;
 
+import inforbis.erp.model.base.BaseEntity;
+
 import javax.persistence.*;
 
 
 @Entity
 @Table(name="Greeting", schema= "base")
-public class Greeting {
-
-	@Id
-	@GeneratedValue
-	private Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+public class Greeting extends BaseEntity {
 
 	public String getText() {
 		return text;

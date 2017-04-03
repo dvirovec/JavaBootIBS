@@ -3,6 +3,8 @@ package inforbis.erp.model.base;
 import org.hibernate.event.spi.LoadEventListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.Set;
 
 
 /**
@@ -10,19 +12,21 @@ import javax.persistence.*;
 */
 @Entity
 @Table(name="user", schema="base")
-public class User {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class User extends BaseEntity {
 
     private String name;
 
+    @Size(max=65)
     private String password;
 
     private String email;
 
     private Boolean active;
+
+
+    @ManyToMany
+    @JoinTable(name = "user_role", schema="base", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @OneToOne
     @JoinColumn(name="department_id")
@@ -31,10 +35,6 @@ public class User {
     @OneToOne
     @JoinColumn(name="user_details_id")
     private UserDetail userDetails;
-
-    public Long getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -68,10 +68,6 @@ public class User {
         this.active = active;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 
     public UserDetail getUserDetails() {
         return userDetails;
@@ -87,5 +83,14 @@ public class User {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

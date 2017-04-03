@@ -7,27 +7,19 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="company", schema="base")
-public class Company {
+public class Company extends  BaseEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
     private String name;
     private String address;
-    private Long town_id;
     private String CID;
 
     @ManyToOne
     @JoinColumn(name="country_id")
     private Country country;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne
+    @JoinColumn(name="town_id")
+    private Town town;
 
     public String getName() {
         return name;
@@ -53,15 +45,19 @@ public class Company {
         this.CID = CID;
     }
 
-    public Long getTown_id() {return town_id;}
-
-    public void setTown_id(Long town_id) {this.town_id = town_id;}
-
     public Country getCountry() {
         return country;
     }
 
     public void setCountry(Country country) {
         this.country = country;
+    }
+
+    public Town getTown() {
+        return town;
+    }
+
+    public void setTown(Town town) {
+        this.town = town;
     }
 }

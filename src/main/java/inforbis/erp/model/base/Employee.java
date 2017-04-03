@@ -10,11 +10,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="employee", schema="hr")
-public class Employee {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Employee extends BaseEntity {
 
     private String name;
 
@@ -22,13 +18,7 @@ public class Employee {
 
     private Double salary;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String pid;
 
     public String getName() {
         return name;
@@ -53,4 +43,8 @@ public class Employee {
     public void setSalary(Double salary) {
         this.salary = salary;
     }
+
+    public String getPid() { return pid; }
+
+    public void setPid(String pid) { this.pid = pid; }
 }
