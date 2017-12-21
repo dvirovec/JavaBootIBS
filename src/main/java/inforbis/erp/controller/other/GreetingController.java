@@ -14,13 +14,13 @@ import java.util.Collection;
 public class GreetingController {
 
 	@Autowired
-	private GreetingService greetingService;
+	private GreetingService greetingService1;
 	
 	@RequestMapping(value= "/erp/greetings", method=RequestMethod.GET,
 			                                produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Iterable<Greeting>> getGreetings() {
 	
-			Iterable<Greeting> greetings = greetingService.findAll();
+			Iterable<Greeting> greetings = greetingService1.findAll();
 			
 			return new ResponseEntity<Iterable<Greeting>>(greetings, HttpStatus.OK);
 	}
@@ -29,7 +29,7 @@ public class GreetingController {
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Greeting> getGreeting(@PathVariable("id") Long id) {
 
-		Greeting greeting = greetingService.findOne(id);
+		Greeting greeting = greetingService1.findOne(id);
 
 
 		if(greeting == null){
@@ -44,7 +44,7 @@ public class GreetingController {
 	produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Greeting> createGreeting(@RequestBody Greeting greeting) {
 
-		Greeting savedGreeting =  greetingService.create(greeting);
+		Greeting savedGreeting =  greetingService1.create(greeting);
 
 		return new ResponseEntity<Greeting>(savedGreeting, HttpStatus.CREATED);
 
@@ -54,7 +54,7 @@ public class GreetingController {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseEntity<Greeting> updateGreeting(@RequestBody Greeting greeting) {
 
-		Greeting updatedGreeting = greetingService.update(greeting);
+		Greeting updatedGreeting = greetingService1.update(greeting);
 
 		if(updatedGreeting==null){
 			return new ResponseEntity<Greeting>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,7 +66,7 @@ public class GreetingController {
 	@RequestMapping(value= "/erp/greetings/{id}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Greeting> deleteGreeting(@PathVariable("id") Long id, @RequestBody Greeting greeting){
 
-		greetingService.delete(id);
+		greetingService1.delete(id);
 
 		return new ResponseEntity<Greeting>(HttpStatus.NO_CONTENT);
 
