@@ -25,7 +25,6 @@ public class GreetingController {
 			return new ResponseEntity<Iterable<Greeting>>(greetings, HttpStatus.OK);
 	}
 
-	// Greeting test controller
 	@RequestMapping(value= "/erp/greetings/{id}", method = RequestMethod.GET,
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Greeting> getGreeting(@PathVariable("id") Long id) {
