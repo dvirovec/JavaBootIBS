@@ -27,6 +27,9 @@ public class TownController {
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Town> getTown(@PathVariable("id") Long id) {
 
+		if(id==-1)
+		return new ResponseEntity<Town>(new Town(), HttpStatus.OK);
+
 		Town town = townService.findOne(id);
 
 		if(town == null){
@@ -59,6 +62,7 @@ public class TownController {
 	@RequestMapping(value= "/erp/town", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE,
 	produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Town> createTown(@RequestBody Town town) {
+
 
 		Town savedTown =  townService.create(town);
 

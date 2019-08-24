@@ -27,6 +27,9 @@ public class EmployeeController {
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Employee> getEmployee(@PathVariable("id") Long id) {
 
+		if(id==-1)
+			return new ResponseEntity<Employee>(new Employee(), HttpStatus.OK);
+
 		Employee employee = employeeService.findOne(id);
 
 		if(employee == null){

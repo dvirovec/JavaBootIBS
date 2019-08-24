@@ -3,8 +3,8 @@ package inforbis.erp.model.base;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -16,7 +16,11 @@ public class Town extends BaseEntity {
 
     private String name;
 
-    private String countryCode;
+    @ManyToOne
+    @JoinColumn(name="country_id")
+    private Country country;
+
+    private String postalCode;
 
     public String getName() {
         return name;
@@ -26,11 +30,19 @@ public class Town extends BaseEntity {
         this.name = name;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

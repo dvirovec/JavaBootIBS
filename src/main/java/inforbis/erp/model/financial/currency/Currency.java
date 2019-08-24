@@ -12,32 +12,30 @@ import javax.persistence.*;
 @Table(name="currency", schema="financial")
 public class Currency extends BaseEntity {
 
-    private Integer currencyNum;
-    private String currencyCode;
-    private String currencyName;
+    private Integer num;
+    private String code;
+    private String name;
 
-    public Integer getCurrencyNum() {
-        return currencyNum;
+    public Integer getNum() {
+        return num;
     }
 
-    public void setCurrencyNum(Integer currencyNum) {
-        this.currencyNum = currencyNum;
+    public void setNum(Integer num) {
+        this.num = num;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
+    public void setCode(String code) { this.code = code; }
+
+    public String getName() {
+        return name;
     }
 
-    public String getCurrencyName() {
-        return currencyName;
-    }
-
-    public void setCurrencyName(String currencyName) {
-        this.currencyName = currencyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

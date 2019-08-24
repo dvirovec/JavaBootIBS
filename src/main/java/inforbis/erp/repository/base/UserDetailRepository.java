@@ -10,4 +10,5 @@ public interface UserDetailRepository extends CrudRepository<UserDetail, Long> {
 
     UserDetail findByLastName(String name);
 
+
 }

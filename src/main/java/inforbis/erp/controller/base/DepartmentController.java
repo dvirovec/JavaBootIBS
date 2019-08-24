@@ -27,6 +27,9 @@ public class DepartmentController {
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Department> getDepartment(@PathVariable("id") Long id) {
 
+		if(id==-1)
+			return new ResponseEntity<Department>(new Department(), HttpStatus.OK);
+
 		Department department = departmentService.findOne(id);
 
 		if(department == null){

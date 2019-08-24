@@ -27,6 +27,9 @@ public class CountryController {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Country> getCountry(@PathVariable("id") Long id) {
 
+		if(id==-1)
+			return new ResponseEntity<Country>(new Country(), HttpStatus.OK);
+
 		Country country = countryService.findOne(id);
 
 		if(country == null){

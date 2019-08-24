@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="company", schema="base")
-public class Company extends  BaseEntity {
+public class Company extends BaseEntity {
 
     private String name;
     private String address;

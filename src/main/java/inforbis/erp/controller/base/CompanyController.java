@@ -6,22 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Collection;
 
 @RestController
 public class CompanyController {
 
 	@Autowired
 	private CompanyService companyService;
+
 
 	@RequestMapping(value= "/erp/company", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Iterable<Company>> getCompanys() {
@@ -44,6 +37,9 @@ public class CompanyController {
 
 	@RequestMapping(value= "/erp/company/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Company> getCompany(@PathVariable("id") Long id) {
+
+		if(id==-1)
+			 return new ResponseEntity<Company>(new Company(), HttpStatus.OK);
 
 		Company company = companyService.findOne(id);
 
@@ -78,8 +74,8 @@ public class CompanyController {
 		return new ResponseEntity<Company>(updatedCompany, HttpStatus.OK);
 	}
 
-	@RequestMapping(value= "/erp/company/{id}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Company> deleteCompany(@PathVariable("id") Long id, @RequestBody Company company){
+	@RequestMapping(value= "/erp/company/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Company> deleteCompany(@PathVariable("id") Long id){
 
 		companyService.delete(id);
 

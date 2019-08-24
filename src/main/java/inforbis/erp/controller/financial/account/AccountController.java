@@ -32,6 +32,9 @@ public class AccountController {
                                                produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> getAccount(@PathVariable("id") Long id) {
 
+        if(id==-1)
+            return new ResponseEntity<Account>(new Account(), HttpStatus.OK);
+
         Account account = accountService.findOne(id);
 
         if(account==null) {

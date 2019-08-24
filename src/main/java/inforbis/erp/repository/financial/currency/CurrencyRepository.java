@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
  */
 public interface CurrencyRepository extends JpaRepository<Currency, Long> {
 
-    @Query("select a from Currency a where a.client_id = :client_id and a.currencyName like :name"+"%" )
+    @Query("select a from Currency a where a.client_id = :client_id and a.name like :name"+"%" )
     Iterable<Currency> findCurrencyByName(@Param("client_id") Long client_id, @Param("name") String name);
 
     @Query("select a from Currency a where a.client_id = :client_id")

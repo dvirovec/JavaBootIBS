@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<title>Insert title here</title>
+
+<link href="../static/css/erp.css" th:href="@{css/erp.css}" rel="stylesheet" media="screen"/>
+<script src="../static/script/jquery-3.1.1.min.js" type="text/javascript" th:src="@{script/jquery-3.1.1.min.js}"></script>
+
+<script th:inline="javascript">
+
+var greeting = "";
+
+console.log(greeting);
+
+$(document).ready( function() {
+
+	console.log("Test");
+
+$("#list").on("click", function() {
+
+$.get( "/erp/greetings", function( data ) {
+
+		$('#greeting_list').empty();
+
+		data.forEach(function(item){
+			console.log(item.text);
+			$('#greeting_list').append('<li>' + item.text  + '</li>');
+		});
+	});
+});
+
+$("#get_id").on("click", function() {
+			$.get( "/erp/greetings/"+$("#id").val(), function( data ) {
+        			greeting = data.text;
+			});
+});
+
+
+$("#save").on("click", function() {
+
+var data={ "text":$("#greeting").val()};
+
+$.ajax ({
+    url: "/erp/greetings",
+    type: "POST",
+    data: JSON.stringify(data),
+    dataType: "json",
+    contentType: "application/json; charset=utf-8",
+    success: function(){
+        console.log("OK");
+    }
+});
+
+});
+
+
+
+});
+
+</script>
+
+</head>
+
+
+<body>
+
+<h1>Companies</h1>
+
+<div id="result"></div>
+		Test
+
+<input type="text" id="greeting" />
+<button id="save">Save</button>
+<hr/>
+<button id="list">List</button>
+
+<ul id="greeting_list">
+
+</ul>
+<hr/>
+<input type="text" id="id"/>
+<button id="get_id">GetId</button>
+<div>"${greeting}"!!</div>
+
+</body>
+
+</html>

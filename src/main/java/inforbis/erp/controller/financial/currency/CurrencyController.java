@@ -28,6 +28,9 @@ public class CurrencyController {
 			                                     produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Currency> getCurrency(@PathVariable("id") Long id) {
 
+		if(id==-1)
+			return new ResponseEntity<Currency>(new Currency(), HttpStatus.OK);
+
 		Currency currency = currencyService.findOne(id);
 
 		if(currency == null){
@@ -61,12 +64,13 @@ public class CurrencyController {
 		return new ResponseEntity<Currency>(updatedCurrency, HttpStatus.OK);
 	}
 
-	@RequestMapping(value= "/erp/currency/{id}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Currency> deleteCurrency(@PathVariable("id") Long id, @RequestBody Currency currency){
+	@RequestMapping(value= "/erp/currency/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Currency> deleteCurrency(@PathVariable("id") Long id){
 
 		currencyService.delete(id);
 
 		return new ResponseEntity<Currency>(HttpStatus.NO_CONTENT);
 
 	}
+
 }

@@ -2,7 +2,6 @@ package inforbis.erp.model.base;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.sql.Time;
 import java.util.Calendar;
 
 /**

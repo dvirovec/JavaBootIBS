@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html lang='hr-HR'>
+<head>
+
+    <script src="../script/jquery-3.1.1.min.js"></script>
+    <script src="../semantic/semantic.min.js"></script>
+    <script src="../ractive/ractive.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+    <script src="helpers.js"></script>    
+    
+ 	<link rel="import" href="ibs_data_table.js">
+ 	<link rel="import" href="ibs_combo.js">
+    <link rel="import" href="data_grid.js">
+
+    <link rel="stylesheet" type="text/css" href="../semantic/semantic.min.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+
+
+    <style type="text/css">
+
+	select {
+		color: blue;
+		font-weight: bold;
+	}
+
+	input {
+		color: blue;
+		font-weight: bold;
+	}
+	td {
+	    padding: 5px;
+	}
+
+	.number {
+	    text-align:right;
+	}
+
+
+</style>
+
+</head>
+<body>
+
+<div id="home" style="padding:10px;"></div>
+
+<script id="template" type="text/ractive">
+	
+<div class="ui grid" >
+
+<div class="ten column row" style="margin-right:40px;">
+
+<div class="left floated column" style="width:50%"></div>
+
+<div class="right floated column" style="width:50%">
+<div class="ui blue buttons">
+  <div class="ui button">{{user_detail.firstName}}&nbsp&nbsp{{user_detail.lastName}}</div>
+  <div class="ui floating dropdown icon button">
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <div class="item" onclick="logout();"><i class="hide icon"></i>Odjava</div>
+      <div class="item"><i class="edit icon"></i>Profil</div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+</div>
+
+<div class="row">
+
+<div class="column" id="erp-menu" style="background-color:white;width:20%;padding-right:0px;">
+
+<div class="ui styled accordion" style="width: 100%;font-size: 16px;border-radius: 0px !important;">
+
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Prometni dokumenti
+  </div>
+
+<!-- -->
+  <div class="content"> 	
+  	<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	  <a class="item">Otpremnice</a>
+	  <a class="item">Računi</a>  
+	</div>
+ </div>
+<!-- -->
+
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Računovodstvo
+  </div>
+  <div class="content" style="padding-left:50px;">
+	<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	    <a class="item" onclick="openAccountForm()">Konta</a>
+		<a class="item" onclick="openCurrencyForm()">Valute</a>
+		<a class="item" onclick="openPostingForm()">Knjiženja</a>
+		<a class="item" onclick="openPeriodForm()">Periodi</a>
+	</div>
+  </div>
+
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Skladišno poslovanje
+  </div>
+
+  <div class="content"></div>
+
+<div class="title">
+    <i class="dropdown icon"></i>
+    Kadrovi
+  </div>
+<div class="content" style="padding-left:50px;">
+<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	   <a class="item" onclick="openEmployeeForm()">Zaposlenici</a>	   
+	</div>
+</div>
+
+
+<div class="active title">
+    <i class="dropdown icon"></i>
+    Osnovni podaci
+  </div>
+<div class="content" style="padding-left:50px;">
+<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	   <a class="item" onclick="openCompanyForm()">Poduzeća</a>
+	   <a class="item" onclick="openOrderForm()">Nalozi</a>
+	   <a class="item" onclick="openEmployeeForm()">Zaposlenici</a>
+	   <a class="item" onclick="openCountryForm()">Države</a>
+	   <a class="item" onclick="openTownForm()">Gradovi</a>
+	</div>
+</div>
+
+<div class="active title">
+    <i class="dropdown icon"></i>
+    Konfiguracija
+ </div>
+<div class="content" style="padding-left:50px;">
+<div class="ui secondary vertical menu" style="width: 100%;font-size: 16px;">
+	   <a class="item" onclick="openRolesForm()">Uloge</a>	  
+	   <a class="item" onclick="openUsersForm()">Korisnici</a>
+	   <a class="item" onclick="openEmployeeForm()">Autorizacije</a>	   
+	</div>
+</div>
+
+</div>
+
+
+</div>
+
+	<div class="column" id="erp-document"  style="width:60%;"></div>
+
+	<div class="column" id="erp-tools"  style="width:20%;"></div>
+	
+	</div>		
+		
+</div>
+
+	</script>
+
+    <script type="text/javascript">
+
+    var page = "/";
+
+
+    var logout= ()=>{
+
+    	$.get( "/erp/logout");
+
+    	login();
+    	
+    }
+
+    var openCompanyForm = ()=>{
+    	openPage("./erp/base/company/company.ractive.js");
+    }	
+
+    var openRolesForm = ()=>{
+    	openPage("./erp/base/roles/roles.ractive.js");
+    }	
+
+    var openUsersForm = ()=>{
+    	openPage("./erp/base/user/users.ractive.js");
+    }
+
+	var openCurrencyForm = ()=>{
+		openPage("./erp/financial/currency/currency.ractive.js");
+    }
+
+    var openOrderForm = ()=>{
+		openPage("./erp/travel/travel_order.ractive.js");
+    }
+
+
+	var openEmployeeForm = ()=>{
+		openPage("./erp/base/employee/employee.ractive.js");
+    }
+
+    var openCountryForm = ()=>{
+		openPage("./erp/base/country/country.ractive.js");
+    }
+
+    var openTownForm = ()=>{
+		openPage("./erp/base/town/town.ractive.js");
+    }
+
+	var openAccountForm = ()=>{
+		openPage("./erp/financial/account/account.ractive.js");
+    }
+
+    var openPostingForm = ()=>{
+		openPage("./erp/financial/posting/posting.ractive.js");
+    }
+
+     var openPeriodForm = ()=>{
+		openPage("./erp/financial/period/period.ractive.js");
+    }
+
+
+
+var check_reload = (url) => {
+
+	let user_id = getCookie("orbis.erp.login");
+		
+	let jSessionId = getCookie("orbis.erp.session_id");
+
+	if(user_id!="") {	
+
+	$.get( "/erp/user_detail/"+user_id, (user_detail)=>{
+							home_page.set("user_detail", user_detail);								
+						});	
+
+	$.get( "/erp/check_session/"+user_id+"/"+jSessionId, (session_exists)=>{				
+						if(session_exists && url) {											
+							displayPage(url);									
+						}
+						else {
+							login();
+						}
+				}).fail(()=>{
+					login();
+			}); 
+
+   }
+   else
+   		login();
+
+}
+
+var openPage = (page_url)=> {
+
+    page = page_url;	
+
+	check_reload(page);
+
+}							    
+
+
+	var login = ()=> {
+		$("#erp-document").load("/login.js");
+	};
+
+    var displayPage= (page_url) => {
+
+		httpGet(page_url).then(
+
+		        function (value) {
+		            $("#erp-document").html(value);
+		             setCookie("orbis.erp.last_page", page_url, 1); 		
+		        },
+		        function (reason) {
+		            console.error('Something went wrong');
+		        });
+
+    }
+
+
+    var home_page = new Ractive({
+    	el:"#home",
+    	template:"#template",
+    	data: {
+    		user:null,
+    		user_detail:null,
+    	},
+	   });
+
+    		var user = null;
+    		//var page_url="";
+    		//var page_url="./erp/financial/currency/currency.ractive.js";
+    		var page_url="./erp/base/company/company.js";
+			//var page_url="inforbis.html";
+    		//var page_url="./erp/travel/travel_order.ractive.html";
+
+            //var host = "http://192.168.226.199:8080";
+            //var host = "http://localhost:8080";
+            var host = "";
+
+			$(document).ready(function(){
+								
+				$('.ui.accordion').accordion();					
+
+				$('.dropdown').dropdown();
+
+			  });
+
+			let last_page = getCookie("orbis.erp.last_page");
+		
+			
+			openPage(last_page);
+
+
+
+
+		</script>
+
+</body>
+</html>

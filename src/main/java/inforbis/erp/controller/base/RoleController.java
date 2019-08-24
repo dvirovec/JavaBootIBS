@@ -49,6 +49,10 @@ public class RoleController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Role> getRole(@PathVariable("id") Long id) {
 
+        if(id==-1)
+            return new ResponseEntity<Role>(new Role(), HttpStatus.OK);
+
+
         Role role = roleService.findOne(id);
 
         return new ResponseEntity<Role>(role, HttpStatus.OK);
@@ -57,6 +61,7 @@ public class RoleController {
     @RequestMapping(value= "/erp/role", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Role> createRole(@RequestBody Role role) {
+
 
         Role savedRole =  roleService.create(role);
 

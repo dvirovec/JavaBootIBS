@@ -261,14 +261,13 @@ IbsTable = Ractive.extend({
            let object = this;
 
            $.get(object.get("data_url")+"/-1", function( data ) {
-                            //object.get("data_rows").push( JSON.parse( JSON.stringify( this.get("default_row"))));
                             object.get("data_rows").push(data);
                             object.update("data_rows");
                             object.set("selected",object.get("data_rows").length-1);
                             object.update("selected");
                             object.set("append_mode", true);
 
-                            if(openEdit!=undefined) openEdit();
+                            object.openEdit();
 
                        });
         },
@@ -563,8 +562,6 @@ IbsTable = Ractive.extend({
     openEdit: function() {     
 
     let object = this;    
-      
-    this.set("edit_mode", true);
 
     let menu = document.getElementById("data_menu");        
     menu.style.visibility = "hidden"; 

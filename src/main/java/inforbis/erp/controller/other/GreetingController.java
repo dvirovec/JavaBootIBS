@@ -73,4 +73,13 @@ public class GreetingController {
 	}
 
 
+	@RequestMapping(value="/erp/settings/{property}/{value}", method= RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity setProperty(@PathVariable("property") String property, @PathVariable("value") String value) {
+
+		System.out.println(String.format(" Property %s set to %s", property, value));
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+
 }
